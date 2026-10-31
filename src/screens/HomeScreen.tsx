@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Header } from "../components/Header";
 import { SearchBar } from "../components/SearchBar";
@@ -6,17 +6,16 @@ import { CategoryChips } from "../components/CategoryChips";
 import { PriceFilter } from "../components/PriceFilter";
 import { BookGrid } from "../components/BookGrid";
 import { FloatingCartButton } from "../components/FloatingCartButton";
-import { TodoBox } from "../components/TodoBox";
 // import { EmptyState } from "../components/EmptyState";
-// import { LoadingView } from "../components/LoadingView";
-// import { ErrorView } from "../components/ErrorView";
-// import { getBooks } from "../services/bookService";
-// import { getCategories } from "../services/categoryService";
-// import { getErrorMessage } from "../api/client";
+import { LoadingView } from "../components/LoadingView";
+import { ErrorView } from "../components/ErrorView";
+import { getBooks } from "../services/bookService";
+import { getCategories } from "../services/categoryService";
+import { getErrorMessage } from "../api/client";
 // import { useDebounce } from "../hooks/useDebounce";
 // import { filterBooks } from "../utils/filters";
-import { MOCK_BOOKS, MOCK_CATEGORIES } from "../data/mockBooks"; // ← dữ liệu GIẢ
 import { PriceRange } from "../utils/filters";
+import { Book, Category } from "../types";
 import { useCart } from "../store/hooks";
 import { TabScreenProps } from "../navigation/types";
 import { colors } from "../theme";
@@ -28,8 +27,28 @@ export function HomeScreen({ navigation }: TabScreenProps<"Home">) {
   // TODO BT7.5b: thay dữ liệu giả bằng state: books, categories, loading, error  (useState)
   //   rồi viết hàm load() gọi SONG SONG: const [b, c] = await Promise.all([getBooks(), getCategories()])
   //   gọi load() trong useEffect(…, []) — nhớ try/catch/finally.
-  const books = MOCK_BOOKS;
-  const categories = MOCK_CATEGORIES;
+  const [books, setBooks] = useState<Book[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [b, c] = await Promise.all([getBooks(), getCategories()]);
+      setBooks(b);
+      setCategories(c);
+    } catch (e) {
+      setError(getErrorMessage(e));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [keyword, setKeyword] = useState("");
@@ -42,7 +61,6 @@ export function HomeScreen({ navigation }: TabScreenProps<"Home">) {
 
   // TODO BT7.8b: nhận categoryId từ route.params (Tab Danh mục gửi sang) → setCategoryId(id) rồi navigation.setParams({ categoryId: undefined })
 
-  // TODO BT7.5c: hiển thị <LoadingView/> khi loading, <ErrorView message onRetry={load}/> khi error, ngược lại là BookGrid
   // TODO BT7.7d: ListEmptyComponent = <EmptyState emoji="🔎" title="Không tìm thấy sách phù hợp" … actionLabel="Xóa bộ lọc" /> + hàm clearFilters
   // TODO BT7.7e: nút "✕ Xóa bộ lọc" (chỉ hiện khi đang có bộ lọc) trong header của lưới
 
@@ -59,18 +77,24 @@ export function HomeScreen({ navigation }: TabScreenProps<"Home">) {
           }}
         />
       )}
-      <BookGrid
-        data={visibleBooks}
-        // TODO BT7.2a: onPressBook → navigation.navigate("BookDetail", { bookId: b.id })
-        onPressBook={(b) => navigation.navigate("BookDetail", { bookId: b.id })}
-        ListHeaderComponent={
-          <View>
-            <CategoryChips categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
-            <PriceFilter value={priceRange} onChange={setPriceRange} />
-            <TodoBox id="BT7.5b">Màn Home đang dùng dữ liệu GIẢ (mockBooks). Hãy nối API json-server.</TodoBox>
-          </View>
-        }
-      />
+      {/* TODO BT7.5c: hiển thị <LoadingView/> khi loading, <ErrorView message onRetry={load}/> khi error, ngược lại là BookGrid */}
+      {loading ? (
+        <LoadingView label="Đang tải sách…" />
+      ) : error ? (
+        <ErrorView message={error} onRetry={load} />
+      ) : (
+        <BookGrid
+          data={visibleBooks}
+          // TODO BT7.2a: onPressBook → navigation.navigate("BookDetail", { bookId: b.id })
+          onPressBook={(b) => navigation.navigate("BookDetail", { bookId: b.id })}
+          ListHeaderComponent={
+            <View>
+              <CategoryChips categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
+              <PriceFilter value={priceRange} onChange={setPriceRange} />
+            </View>
+          }
+        />
+      )}
       <FloatingCartButton count={totalQuantity} onPress={() => navigation.navigate("Cart")} />
     </View>
   );
