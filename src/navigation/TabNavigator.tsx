@@ -13,7 +13,6 @@ export function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{ headerShown: false }}
-      // TODO BT7.1b: thêm prop  tabBar={(props) => <CustomTabBar {...props} />}
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Home" }} />

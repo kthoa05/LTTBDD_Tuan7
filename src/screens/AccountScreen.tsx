@@ -8,7 +8,6 @@ import { colors, radius } from "../theme";
 // Dữ liệu đăng nhập đang là GIẢ  — đăng nhập thật qua API làm ở buổi sau.
 export function AccountScreen() {
   const { user, isLoggedIn, signIn, signOut } = useAuth();
-  // TODO BT7.4c: kiểm tra 2 nhánh JSX bên dưới hiển thị đúng khi isLoggedIn đổi (cần xong BT7.4a, BT7.4b)
 
   return (
     <View style={styles.container}>
@@ -20,7 +19,6 @@ export function AccountScreen() {
           <Text style={styles.email}>{user.email}</Text>
           <Pressable
             style={[styles.btn, styles.btnOutline]}
-            // TODO BT7.4d: nút Đăng xuất → signOut
             onPress={signOut}
           >
             <Text style={styles.btnOutlineText}>Đăng xuất</Text>
@@ -32,7 +30,6 @@ export function AccountScreen() {
           <Text style={styles.name}>Bạn chưa đăng nhập</Text>
           <Pressable
             style={styles.btn}
-            // TODO BT7.4d: nút đăng nhập thử → signIn({ id: 1, name: "Học viên Demo", email: "demo@bookstore.vn" }, "fake-token")
             onPress={() => signIn({ id: 1, name: "Học viên Demo", email: "demo@bookstore.vn" }, "fake-token")}
           >
             <Text style={styles.btnText}>Đăng nhập thử (dữ liệu giả)</Text>

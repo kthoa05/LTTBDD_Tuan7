@@ -20,12 +20,8 @@ import { TabScreenProps } from "../navigation/types";
 import { colors, radius } from "../theme";
 
 export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
-  // TODO BT7.3d: lấy { totalQuantity } từ useCart() và truyền vào <FloatingCartButton count=... />
   const { totalQuantity } = useCart();
 
-  // TODO BT7.5b: thay dữ liệu giả bằng state: books, categories, loading, error  (useState)
-  //   rồi viết hàm load() gọi SONG SONG: const [b, c] = await Promise.all([getBooks(), getCategories()])
-  //   gọi load() trong useEffect(…, []) — nhớ try/catch/finally.
   const [books, setBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,17 +51,14 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
   const [priceRange, setPriceRange] = useState<PriceRange>(null);
   const [sort, setSort] = useState<"asc" | "desc" | null>(null);
 
-  // TODO BT7.7a: const debouncedKeyword = useDebounce(keyword, 400);
   const debouncedKeyword = useDebounce(keyword, 400);
 
-  // TODO BT7.7c: visibleBooks = useMemo(() => filterBooks(books, { keyword: debouncedKeyword, categoryId, priceRange }), [...])
   const visibleBooks = useMemo(() => {
     const filtered = filterBooks(books, { keyword: debouncedKeyword, categoryId, priceRange });
     if (sort === null) return filtered;
     return [...filtered].sort((a, b) => (sort === "asc" ? a.price - b.price : b.price - a.price));
   }, [books, debouncedKeyword, categoryId, priceRange, sort]);
 
-  // TODO BT7.8b: nhận categoryId từ route.params (Tab Danh mục gửi sang) → setCategoryId(id) rồi navigation.setParams({ categoryId: undefined })
   useEffect(() => {
     const id = route.params?.categoryId;
     if (id !== undefined) {
@@ -74,14 +67,12 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
     }
   }, [route.params?.categoryId, navigation]);
 
-  // TODO BT7.7d: ListEmptyComponent = <EmptyState emoji="🔎" title="Không tìm thấy sách phù hợp" … actionLabel="Xóa bộ lọc" /> + hàm clearFilters
   const clearFilters = () => {
     setKeyword("");
     setCategoryId(null);
     setPriceRange(null);
   };
 
-  // TODO BT7.7e: nút "✕ Xóa bộ lọc" (chỉ hiện khi đang có bộ lọc) trong header của lưới
   const hasFilter = keyword !== "" || categoryId !== null || priceRange !== null;
 
   return (
@@ -97,7 +88,6 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
           }}
         />
       )}
-      {/* TODO BT7.5c: hiển thị <LoadingView/> khi loading, <ErrorView message onRetry={load}/> khi error, ngược lại là BookGrid */}
       {loading ? (
         <LoadingView label="Đang tải sách…" />
       ) : error ? (
@@ -105,7 +95,6 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
       ) : (
         <BookGrid
           data={visibleBooks}
-          // TODO BT7.2a: onPressBook → navigation.navigate("BookDetail", { bookId: b.id })
           onPressBook={(b) => navigation.navigate("BookDetail", { bookId: b.id })}
           ListHeaderComponent={
             <View>

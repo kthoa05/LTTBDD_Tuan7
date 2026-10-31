@@ -15,7 +15,6 @@ export function BookDetailScreen({ route }: RootScreenProps<"BookDetail">) {
   const { add } = useCart();
   const { isFavorite, toggle } = useWishlist();
 
-  // TODO BT7.5d: tạo state book / loading / error và hàm load() gọi getBookById(bookId); chạy trong useEffect([bookId])
   const [book, setBook] = useState<Book | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +35,6 @@ export function BookDetailScreen({ route }: RootScreenProps<"BookDetail">) {
     load();
   }, [load]);
 
-  // TODO BT7.5e: if (loading) return <LoadingView/>;  if (error || !book) return <ErrorView message onRetry={load}/>
   if (loading) return <LoadingView />;
   if (error || !book) return <ErrorView message={error ?? "Không tìm thấy sách."} onRetry={load} />;
 
@@ -56,7 +54,6 @@ export function BookDetailScreen({ route }: RootScreenProps<"BookDetail">) {
       <Text style={styles.price}>{formatPrice(book.price)}</Text>
       <Text style={styles.stock}>Còn {book.stock} cuốn</Text>
       <Text style={styles.desc}>{book.description}</Text>
-      {/* TODO BT7.3c: nút "Thêm vào giỏ" → add({ bookId, title, price, emoji, color, stock }) từ book */}
       <Pressable
         style={styles.btn}
         onPress={() => add({ bookId: book.id, title: book.title, price: book.price, emoji: book.emoji, color: book.color, stock: book.stock })}

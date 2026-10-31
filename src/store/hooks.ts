@@ -15,7 +15,6 @@ export function useCart() {
   const dispatch = useAppDispatch();
   const items = useAppSelector((s) => s.cart.items);
 
-  // TODO BT7.3b: totalQuantity = tổng quantity · totalPrice = tổng price * quantity (dùng reduce; useMemo theo [items])
   const totalQuantity = useMemo(() => items.reduce((n, i) => n + i.quantity, 0), [items]);
   const totalPrice = useMemo(() => items.reduce((n, i) => n + i.price * i.quantity, 0), [items]);
 
@@ -38,7 +37,7 @@ export function useAuth() {
   return {
     user,
     token,
-    isLoggedIn: !!token && !!user, // TODO BT7.4b: true khi có cả token lẫn user  →  !!token && !!user
+    isLoggedIn: !!token && !!user,
     signIn: useCallback((u: User, t: string) => dispatch(setCredentials({ user: u, token: t })), [dispatch]),
     signOut: useCallback(() => dispatch(logout()), [dispatch]),
     patchUser: useCallback((p: Partial<User>) => dispatch(updateUser(p)), [dispatch]),

@@ -18,7 +18,6 @@ export function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
-      {/* TODO BT7.1c: đăng ký màn BookDetail vào Stack (title "Chi tiết sách") — dùng BookDetailScreen đã import ở trên */}
       <Stack.Screen name="BookDetail" component={BookDetailScreen} options={{ title: "Chi tiết sách" }} />
       <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ title: "Thanh toán" }} />
     </Stack.Navigator>

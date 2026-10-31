@@ -12,9 +12,7 @@ interface Props {
 export function PriceFilter({ value, onChange }: Props) {
   return (
     <View style={styles.row}>
-      {/* TODO BT7.C2: render 3 nút từ PRICE_RANGES (import từ utils/filters); nút đang chọn có nền cyan (colors.cyan) */}
       {PRICE_RANGES.map((r) => {
-        // active = value === r.key · onPress = onChange(active ? null : r.key)   (mẫu: xem CategoryChips)
         const active = value === r.key;
         return (
           <Pressable key={r.key} style={[styles.btn, active && styles.btnActive]} onPress={() => onChange(active ? null : r.key)}>

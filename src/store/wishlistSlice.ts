@@ -10,7 +10,6 @@ const wishlistSlice = createSlice({
   name: "wishlist",
   initialState,
   reducers: {
-    // TODO BT7.C1 (thử thách): nếu id đã có trong state.ids thì bỏ ra, chưa có thì thêm vào
     toggleWishlist(state, action: PayloadAction<number>) {
       const i = state.ids.indexOf(action.payload);
       if (i >= 0) state.ids.splice(i, 1);

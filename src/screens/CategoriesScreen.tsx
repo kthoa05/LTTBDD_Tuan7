@@ -11,7 +11,6 @@ import { colors, radius } from "../theme";
 
 // danh mục lấy từ API; nhấn → về Home kèm categoryId (Home tự lọc)
 export function CategoriesScreen({ navigation }: TabScreenProps<"Categories">) {
-  // TODO BT7.6b: state data / loading / error + load() gọi getCategories() trong useEffect — giống Home
   const [data, setData] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,6 @@ export function CategoriesScreen({ navigation }: TabScreenProps<"Categories">) {
   return (
     <View style={styles.container}>
       <Header title="🗂️ Danh mục" />
-      {/* TODO BT7.6c: loading → <LoadingView/>, error → <ErrorView onRetry={load}/> */}
       {loading ? (
         <LoadingView label="Đang tải danh mục…" />
       ) : error ? (
@@ -46,7 +44,6 @@ export function CategoriesScreen({ navigation }: TabScreenProps<"Categories">) {
           keyExtractor={(c) => String(c.id)}
           contentContainerStyle={{ padding: 12, gap: 10 }}
           renderItem={({ item }) => (
-            // TODO BT7.8c: onPress → navigation.navigate("Home", { categoryId: item.id })
             <Pressable style={styles.row} onPress={() => navigation.navigate("Home", { categoryId: item.id })}>
               <Text style={styles.emoji}>{item.emoji}</Text>
               <Text style={styles.name}>{item.name}</Text>

@@ -8,7 +8,6 @@ import { colors, formatPrice, radius } from "../theme";
 
 // đọc giỏ hàng từ store (không còn mock cứng); nút Thanh toán → Checkout
 export function CartScreen({ navigation }: TabScreenProps<"Cart">) {
-  // TODO BT7.3f: đọc { items, totalPrice } từ useCart() (store Redux) — hiện đang để giỏ rỗng
   const { items, totalPrice } = useCart();
 
   return (
@@ -26,7 +25,6 @@ export function CartScreen({ navigation }: TabScreenProps<"Cart">) {
         <Pressable
           style={[styles.btn, items.length === 0 && styles.btnDisabled]}
           disabled={items.length === 0}
-          // TODO BT7.2b: navigation.navigate("Checkout", { total: totalPrice })
           onPress={() => navigation.navigate("Checkout", { total: totalPrice })}
         >
           <Text style={styles.btnText}>Thanh toán</Text>
