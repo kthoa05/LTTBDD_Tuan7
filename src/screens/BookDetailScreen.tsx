@@ -4,7 +4,7 @@ import { LoadingView } from "../components/LoadingView";
 import { ErrorView } from "../components/ErrorView";
 import { getBookById } from "../services/bookService";
 import { getErrorMessage } from "../api/client";
-import { useCart } from "../store/hooks";
+import { useCart, useWishlist } from "../store/hooks";
 import { RootScreenProps } from "../navigation/types";
 import { Book } from "../types";
 import { colors, formatPrice, radius } from "../theme";
@@ -13,6 +13,7 @@ import { colors, formatPrice, radius } from "../theme";
 export function BookDetailScreen({ route }: RootScreenProps<"BookDetail">) {
   const { bookId } = route.params;
   const { add } = useCart();
+  const { isFavorite, toggle } = useWishlist();
 
   // TODO BT7.5d: tạo state book / loading / error và hàm load() gọi getBookById(bookId); chạy trong useEffect([bookId])
   const [book, setBook] = useState<Book | null>(null);
@@ -44,7 +45,13 @@ export function BookDetailScreen({ route }: RootScreenProps<"BookDetail">) {
       <View style={[styles.cover, { backgroundColor: book.color }]}>
         <Text style={styles.emoji}>{book.emoji}</Text>
       </View>
-      <Text style={styles.title}>{book.title}</Text>
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>{book.title}</Text>
+        {/* BT7.C1: nút ♡/♥ — bấm để thêm/bỏ khỏi danh sách yêu thích */}
+        <Pressable onPress={() => toggle(book.id)} hitSlop={8}>
+          <Text style={styles.heart}>{isFavorite(book.id) ? "♥" : "♡"}</Text>
+        </Pressable>
+      </View>
       <Text style={styles.author}>{book.author}</Text>
       <Text style={styles.price}>{formatPrice(book.price)}</Text>
       <Text style={styles.stock}>Còn {book.stock} cuốn</Text>
@@ -65,7 +72,9 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 8 },
   cover: { height: 220, borderRadius: radius.lg, alignItems: "center", justifyContent: "center" },
   emoji: { fontSize: 90 },
-  title: { fontSize: 22, fontWeight: "800", color: colors.text, marginTop: 8 },
+  titleRow: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 8 },
+  title: { flex: 1, fontSize: 22, fontWeight: "800", color: colors.text },
+  heart: { fontSize: 28, color: colors.heart },
   author: { color: colors.muted, fontSize: 15 },
   price: { fontSize: 20, fontWeight: "800", color: colors.indigo },
   stock: { color: colors.muted },
