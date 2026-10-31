@@ -53,15 +53,17 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
   const [keyword, setKeyword] = useState("");
   const [categoryId, setCategoryId] = useState<number | null>(null);
   const [priceRange, setPriceRange] = useState<PriceRange>(null);
+  const [sort, setSort] = useState<"asc" | "desc" | null>(null);
 
   // TODO BT7.7a: const debouncedKeyword = useDebounce(keyword, 400);
   const debouncedKeyword = useDebounce(keyword, 400);
 
   // TODO BT7.7c: visibleBooks = useMemo(() => filterBooks(books, { keyword: debouncedKeyword, categoryId, priceRange }), [...])
-  const visibleBooks = useMemo(
-    () => filterBooks(books, { keyword: debouncedKeyword, categoryId, priceRange }),
-    [books, debouncedKeyword, categoryId, priceRange]
-  );
+  const visibleBooks = useMemo(() => {
+    const filtered = filterBooks(books, { keyword: debouncedKeyword, categoryId, priceRange });
+    if (sort === null) return filtered;
+    return [...filtered].sort((a, b) => (sort === "asc" ? a.price - b.price : b.price - a.price));
+  }, [books, debouncedKeyword, categoryId, priceRange, sort]);
 
   // TODO BT7.8b: nhận categoryId từ route.params (Tab Danh mục gửi sang) → setCategoryId(id) rồi navigation.setParams({ categoryId: undefined })
   useEffect(() => {
@@ -109,6 +111,14 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
             <View>
               <CategoryChips categories={categories} selectedId={categoryId} onSelect={setCategoryId} />
               <PriceFilter value={priceRange} onChange={setPriceRange} />
+              <View style={styles.sortRow}>
+                <Pressable style={[styles.sortBtn, sort === "asc" && styles.sortBtnActive]} onPress={() => setSort(sort === "asc" ? null : "asc")}>
+                  <Text style={[styles.sortText, sort === "asc" && styles.sortTextActive]}>Giá tăng dần</Text>
+                </Pressable>
+                <Pressable style={[styles.sortBtn, sort === "desc" && styles.sortBtnActive]} onPress={() => setSort(sort === "desc" ? null : "desc")}>
+                  <Text style={[styles.sortText, sort === "desc" && styles.sortTextActive]}>Giá giảm dần</Text>
+                </Pressable>
+              </View>
               {hasFilter && (
                 <Pressable style={styles.clearChip} onPress={clearFilters}>
                   <Text style={styles.clearText}>✕ Xóa bộ lọc</Text>
@@ -134,6 +144,11 @@ export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
+  sortRow: { flexDirection: "row", paddingHorizontal: 12, paddingBottom: 10, gap: 8 },
+  sortBtn: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill, borderWidth: 1, borderColor: colors.indigo },
+  sortBtnActive: { backgroundColor: colors.indigo },
+  sortText: { color: colors.text, fontWeight: "600", fontSize: 13 },
+  sortTextActive: { color: "#fff" },
   clearChip: { alignSelf: "flex-start", backgroundColor: "#FEE2E2", paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill, marginHorizontal: 6, marginBottom: 6 },
   clearText: { color: colors.danger, fontWeight: "700", fontSize: 13 },
 });
