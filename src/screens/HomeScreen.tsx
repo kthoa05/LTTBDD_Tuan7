@@ -19,7 +19,7 @@ import { useCart } from "../store/hooks";
 import { TabScreenProps } from "../navigation/types";
 import { colors, radius } from "../theme";
 
-export function HomeScreen({ navigation }: TabScreenProps<"Home">) {
+export function HomeScreen({ navigation, route }: TabScreenProps<"Home">) {
   // TODO BT7.3d: lấy { totalQuantity } từ useCart() và truyền vào <FloatingCartButton count=... />
   const { totalQuantity } = useCart();
 
@@ -64,6 +64,13 @@ export function HomeScreen({ navigation }: TabScreenProps<"Home">) {
   );
 
   // TODO BT7.8b: nhận categoryId từ route.params (Tab Danh mục gửi sang) → setCategoryId(id) rồi navigation.setParams({ categoryId: undefined })
+  useEffect(() => {
+    const id = route.params?.categoryId;
+    if (id !== undefined) {
+      setCategoryId(id);
+      navigation.setParams({ categoryId: undefined });
+    }
+  }, [route.params?.categoryId, navigation]);
 
   // TODO BT7.7d: ListEmptyComponent = <EmptyState emoji="🔎" title="Không tìm thấy sách phù hợp" … actionLabel="Xóa bộ lọc" /> + hàm clearFilters
   const clearFilters = () => {
