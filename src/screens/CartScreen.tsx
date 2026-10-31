@@ -31,7 +31,7 @@ export function CartScreen({ navigation }: TabScreenProps<"Cart">) {
           style={[styles.btn, items.length === 0 && styles.btnDisabled]}
           disabled={items.length === 0}
           // TODO BT7.2b: navigation.navigate("Checkout", { total: totalPrice })
-          onPress={() => void navigation}
+          onPress={() => navigation.navigate("Checkout", { total: totalPrice })}
         >
           <Text style={styles.btnText}>Thanh toán</Text>
         </Pressable>
