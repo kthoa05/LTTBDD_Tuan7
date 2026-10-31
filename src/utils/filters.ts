@@ -15,8 +15,10 @@ export const PRICE_RANGES: { key: Exclude<PriceRange, null>; label: string }[] =
 // TODO BT7.C2 (thử thách): trả true nếu giá nằm trong khoảng r (null = không lọc)
 //   lt100: < 100000 · 100to300: 100000..300000 · gt300: > 300000
 const inRange = (price: number, r: PriceRange): boolean => {
-  void price; void r;
-  return true;
+  if (r === null) return true;
+  if (r === "lt100") return price < 100000;
+  if (r === "100to300") return price >= 100000 && price <= 300000;
+  return price > 300000;
 };
 
 export interface BookFilter {
@@ -29,12 +31,12 @@ export interface BookFilter {
 export function filterBooks(books: Book[], f: BookFilter): Book[] {
   // TODO BT7.7c: lọc theo từ khoá — normalize(b.title / b.author).includes(normalize(f.keyword)); từ khoá rỗng = giữ tất cả
   const k = normalize(f.keyword);
-  // TODO BT7.C2: thêm điều kiện inRange(b.price, f.priceRange)
-  void inRange;
   return books.filter(
     (b) =>
       (k === "" || normalize(b.title).includes(k) || normalize(b.author).includes(k)) &&
       // TODO BT7.8a: thêm điều kiện danh mục — f.categoryId === null || b.categoryId === f.categoryId
-      (f.categoryId === null || b.categoryId === f.categoryId)
+      (f.categoryId === null || b.categoryId === f.categoryId) &&
+      // TODO BT7.C2: thêm điều kiện inRange(b.price, f.priceRange)
+      inRange(b.price, f.priceRange)
   );
 }
