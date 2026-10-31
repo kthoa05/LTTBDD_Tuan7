@@ -1,16 +1,21 @@
 import React from "react";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { TabBar, TabItem } from "../components/TabBar";
+import { useCart } from "../store/hooks";
 
 const EMOJI: Record<string, string> = { Home: "🏠", Categories: "🗂️", Cart: "🛒", Account: "👤" };
 
 export function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const { totalQuantity } = useCart();
+
   // TODO BT7.1a: items: TabItem[] = state.routes.map(...)  → { key, label, emoji }
   //   label = descriptors[route.key].options.title ?? route.name ; emoji = EMOJI[route.name]
   const items: TabItem[] = state.routes.map((route) => ({
     key: route.key,
     label: descriptors[route.key].options.title ?? route.name,
     emoji: EMOJI[route.name],
+    // TODO BT7.3e: gắn badge = totalQuantity (từ useCart) cho route "Cart"
+    badge: route.name === "Cart" ? totalQuantity : undefined,
   }));
 
   // TODO BT7.1a: onPress(key): tìm route; navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true })
